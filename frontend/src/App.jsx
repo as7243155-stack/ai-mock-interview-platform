@@ -3,6 +3,7 @@ import { useState } from "react";
 function App() {
   const [role, setRole] = useState("");
   const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(false);
 
   const generateQuestions = async () => {
@@ -16,11 +17,26 @@ function App() {
       const data = await response.json();
 
       setQuestions(data.questions);
+      setAnswers({});
     } catch (error) {
       console.error("Error:", error);
     }
 
     setLoading(false);
+  };
+
+  const handleAnswerChange = (index, value) => {
+    setAnswers({
+      ...answers,
+      [index]: value,
+    });
+  };
+
+  const submitInterview = () => {
+    console.log("Questions:", questions);
+    console.log("Answers:", answers);
+
+    alert("Interview Submitted!");
   };
 
   return (
@@ -34,18 +50,19 @@ function App() {
         onChange={(e) => {
           setRole(e.target.value);
           setQuestions([]);
+          setAnswers({});
         }}
       />
 
       <br />
       <br />
 
-      <button
-        onClick={generateQuestions}
-        disabled={!role}
-      >
-        Generate Questions
-      </button>
+    <button
+     onClick={generateQuestions}
+     disabled={loading || !role}
+   >
+     {loading ? "Generating..." : "Generate Questions"}
+   </button> 
 
       <p>Selected Role: {role}</p>
 
@@ -55,11 +72,29 @@ function App() {
 
       <div>
         {questions.map((question, index) => (
-          <p key={index}>
-            {index + 1}. {question}
-          </p>
+          <div key={index} style={{ marginBottom: "20px" }}>
+            <p>
+              {index + 1}. {question}
+            </p>
+
+            <textarea
+              rows="4"
+              cols="60"
+              placeholder="Type your answer here..."
+              value={answers[index] || ""}
+              onChange={(e) =>
+                handleAnswerChange(index, e.target.value)
+              }
+            />
+          </div>
         ))}
       </div>
+
+      {questions.length > 0 && (
+        <button onClick={submitInterview}>
+          Submit Interview
+        </button>
+      )}
     </div>
   );
 }
