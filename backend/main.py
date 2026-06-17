@@ -24,6 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/")
 def home():
     return {"message": "AI Mock Interview Backend Running"}
@@ -69,9 +70,13 @@ def evaluate_interview(data: dict):
 
     questions = data.get("questions", [])
     answers = data.get("answers", {})
+    role = data.get("role", "Unknown")
 
     prompt = f"""
-You are a senior technical interviewer.
+You are a senior professional interviewer.
+
+Role:
+{role}
 
 Interview Questions:
 {questions}
@@ -79,33 +84,70 @@ Interview Questions:
 Candidate Answers:
 {answers}
 
-Evaluate the candidate honestly.
+Interview Evaluation Philosophy:
 
-Scoring Guidelines:
-90-100 = Exceptional
-75-89 = Strong
-60-74 = Average
-40-59 = Weak
-0-39 = Poor
+- Judge candidates based on demonstrated knowledge, not perfection.
+- Reward partial understanding.
+- Reward logical thinking even if the answer is incomplete.
+- Do not be overly harsh.
+- Do not be overly generous.
+- Act like a real interviewer hiring for the role.
 
-Analyze:
-1. Relevance of answers
-2. Technical knowledge
-3. Communication skills
-4. Completeness
+Evaluate the candidate on:
 
-Return ONLY valid JSON in this exact format:
+1. Technical Knowledge
+2. Communication Skills
+3. Problem Solving Ability
+4. Relevance of Answers
+5. Completeness of Responses
+
+Scoring Rules:
+
+Question Score Guide:
+
+0-1 = Completely incorrect, irrelevant, or empty answer
+2-3 = Very weak answer with minimal understanding
+4-5 = Basic understanding but lacks depth
+6-7 = Good answer showing reasonable knowledge
+8-9 = Strong answer with examples and clear reasoning
+10 = Exceptional answer with deep understanding and excellent communication
+
+Important:
+
+- Use the FULL scoring range.
+- Do NOT give all questions the same score.
+- Reward effort and partial understanding.
+- Only use 0 when the answer is completely wrong or empty.
+- Penalize irrelevant answers.
+- Reward detailed examples.
+
+Return ONLY valid JSON in this format:
 
 {{
-    "score": 85,
+    "overall_score": 78,
+
+    "technical_score": 80,
+    "communication_score": 75,
+    "problem_solving_score": 79,
+
+    "question_feedback": [
+        {{
+            "question": "Question text",
+            "score": 8,
+            "feedback": "Detailed feedback"
+        }}
+    ],
+
     "strengths": [
         "Strength 1",
         "Strength 2"
     ],
+
     "weaknesses": [
         "Weakness 1",
         "Weakness 2"
     ],
+
     "suggestions": [
         "Suggestion 1",
         "Suggestion 2"
@@ -123,13 +165,23 @@ Return ONLY valid JSON in this exact format:
         text = text.replace("```", "")
         text = text.strip()
 
+        print("\n===== GEMINI RESPONSE =====")
+        print(text)
+        print("===========================\n")
+
         result = json.loads(text)
 
         return result
 
     except Exception as e:
+        print("EVALUATION ERROR:", str(e))
+
         return {
-            "score": 0,
+            "overall_score": 0,
+            "technical_score": 0,
+            "communication_score": 0,
+            "problem_solving_score": 0,
+            "question_feedback": [],
             "strengths": [],
             "weaknesses": [str(e)],
             "suggestions": []

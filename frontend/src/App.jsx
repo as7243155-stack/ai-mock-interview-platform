@@ -89,7 +89,9 @@ function App() {
         onClick={generateQuestions}
         disabled={loading || !role}
       >
-        {loading ? "Generating Questions..." : "Generate Questions"}
+        {loading
+          ? "Generating Questions..."
+          : "Generate Questions"}
       </button>
 
       <p>Selected Role: {role}</p>
@@ -105,10 +107,13 @@ function App() {
           {questions.map((question, index) => (
             <div
               key={index}
-              style={{ marginBottom: "20px" }}
+              style={{
+                marginBottom: "20px",
+              }}
             >
               <p>
-                <strong>Q{index + 1}:</strong> {question}
+                <strong>Q{index + 1}:</strong>{" "}
+                {question}
               </p>
 
               <textarea
@@ -117,7 +122,10 @@ function App() {
                 placeholder="Type your answer here..."
                 value={answers[index] || ""}
                 onChange={(e) =>
-                  handleAnswerChange(index, e.target.value)
+                  handleAnswerChange(
+                    index,
+                    e.target.value
+                  )
                 }
               />
             </div>
@@ -137,6 +145,7 @@ function App() {
               <p>
                 ✅ Interview submitted successfully
               </p>
+
               <p>
                 🤖 Generating your evaluation...
               </p>
@@ -149,10 +158,69 @@ function App() {
         <div style={{ marginTop: "40px" }}>
           <h2>Interview Result</h2>
 
-          <h3>Score: {result.score}/100</h3>
+          <h2>
+            Overall Score:{" "}
+            {result.overall_score}/100
+          </h2>
+
+          <hr />
+
+          <h3>Category Scores</h3>
+
+          <p>
+            Technical Knowledge:{" "}
+            {result.technical_score}/100
+          </p>
+
+          <p>
+            Communication Skills:{" "}
+            {result.communication_score}/100
+          </p>
+
+          <p>
+            Problem Solving:{" "}
+            {result.problem_solving_score}/100
+          </p>
+
+          <hr />
+
+          <h3>Question-by-Question Feedback</h3>
+
+          {(result.question_feedback || []).map(
+            (item, index) => (
+              <div
+                key={index}
+                style={{
+                  border: "1px solid gray",
+                  padding: "15px",
+                  marginBottom: "20px",
+                }}
+              >
+                <h4>
+                  Question {index + 1}
+                </h4>
+
+                <p>{item.question}</p>
+
+                <p>
+                  <strong>Score:</strong>{" "}
+                  {item.score}/10
+                </p>
+
+                <p>
+                  <strong>Feedback:</strong>
+                </p>
+
+                <p>{item.feedback}</p>
+              </div>
+            )
+          )}
+
+          <hr />
 
           <h3>Strengths</h3>
-          <ul>
+
+          <ul style={{ textAlign: "left" }}>
             {(result.strengths || []).map(
               (item, index) => (
                 <li key={index}>{item}</li>
@@ -161,7 +229,8 @@ function App() {
           </ul>
 
           <h3>Weaknesses</h3>
-          <ul>
+
+          <ul style={{ textAlign: "left" }}>
             {(result.weaknesses || []).map(
               (item, index) => (
                 <li key={index}>{item}</li>
@@ -170,7 +239,8 @@ function App() {
           </ul>
 
           <h3>Suggestions</h3>
-          <ul>
+
+          <ul style={{ textAlign: "left" }}>
             {(result.suggestions || []).map(
               (item, index) => (
                 <li key={index}>{item}</li>
