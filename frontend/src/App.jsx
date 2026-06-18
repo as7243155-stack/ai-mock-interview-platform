@@ -7,6 +7,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [evaluating, setEvaluating] = useState(false);
   const [result, setResult] = useState(null);
+  const [level, setLevel] = useState("Fresher");
 
   const generateQuestions = async () => {
     setLoading(true);
@@ -14,8 +15,8 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/questions?role=${role}`
-      );
+  `http://127.0.0.1:8000/questions?role=${encodeURIComponent(role)}&level=${encodeURIComponent(level)}`
+);
 
       const data = await response.json();
 
@@ -68,22 +69,34 @@ function App() {
 
   return (
     <div style={{ padding: "20px", textAlign: "center" }}>
-      <h1>AI Mock Interview Platform</h1>
+    <h1>AI Mock Interview Platform</h1>
 
-      <input
-        type="text"
-        placeholder="Enter Job Role"
-        value={role}
-        onChange={(e) => {
-          setRole(e.target.value);
-          setQuestions([]);
-          setAnswers({});
-          setResult(null);
-        }}
-      />
+<input
+  type="text"
+  placeholder="Enter Job Role"
+  value={role}
+  onChange={(e) => {
+    setRole(e.target.value);
+    setQuestions([]);
+    setAnswers({});
+    setResult(null);
+  }}
+/>
 
-      <br />
-      <br />
+<br />
+<br />
+
+<select
+  value={level}
+  onChange={(e) => setLevel(e.target.value)}
+>
+  <option value="Fresher">Fresher</option>
+  <option value="Mid-Level">Mid-Level</option>
+  <option value="Senior">Senior</option>
+</select>
+
+<br />
+<br />
 
       <button
         onClick={generateQuestions}
@@ -95,6 +108,7 @@ function App() {
       </button>
 
       <p>Selected Role: {role}</p>
+      <p>Experience Level: {level}</p>
 
       {loading && (
         <p>Generating AI interview questions...</p>
@@ -157,6 +171,17 @@ function App() {
       {result && (
         <div style={{ marginTop: "40px" }}>
           <h2>Interview Result</h2>
+          <div
+  style={{
+    border: "1px solid gray",
+    padding: "20px",
+    marginBottom: "20px",
+  }}
+>
+  <h3>Interview Summary</h3>
+
+  <p>{result.summary}</p>
+</div>
 
           <h2>
             Overall Score:{" "}

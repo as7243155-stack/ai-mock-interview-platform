@@ -31,19 +31,69 @@ def home():
 
 
 @app.get("/questions")
-def generate_questions(role: str):
+def generate_questions(
+    role: str,
+    level: str = "Fresher"
+):
 
     prompt = f"""
 You are an expert interviewer.
 
-Generate exactly 5 realistic interview questions for a {role}.
+Create a structured interview for the role:
 
-Requirements:
-- Questions must be specific to the role
-- Avoid generic questions
-- Mix beginner and advanced questions
-- Return only the questions
-- One question per line
+Role: {role}
+
+Experience Level: {level}
+
+Generate EXACTLY 5 questions.
+
+Question Structure:
+
+Question 1:
+Fundamentals
+- Test basic concepts and terminology.
+
+Question 2:
+Core Knowledge
+- Test understanding of important concepts used in the role.
+
+Question 3:
+Practical Application
+- Ask how the candidate would apply knowledge in real work.
+
+Question 4:
+Scenario-Based Problem Solving
+- Present a realistic situation and ask how they would respond.
+
+Question 5:
+Advanced Thinking / Decision Making
+- Test reasoning, judgement, optimization, or leadership appropriate to the experience level.
+
+Difficulty Rules:
+
+Fresher:
+- Focus on concepts and understanding.
+- Avoid very advanced topics.
+- Avoid system design.
+- Avoid difficult coding challenges.
+- Do not require writing large code blocks.
+
+Mid-Level:
+- Focus on practical experience.
+- Include troubleshooting and decision making.
+- Moderate difficulty.
+
+Senior:
+- Focus on architecture, leadership, trade-offs, and strategic decisions.
+- Higher difficulty.
+
+Important:
+- Questions must be specific to the role.
+- Questions should evaluate knowledge and reasoning.
+- Avoid asking candidates to write complete programs.
+- Avoid LeetCode-style coding challenges unless the role explicitly requires them.
+- Return ONLY the 5 questions.
+- One question per line.
 """
 
     try:
@@ -91,7 +141,7 @@ Interview Evaluation Philosophy:
 - Reward logical thinking even if the answer is incomplete.
 - Do not be overly harsh.
 - Do not be overly generous.
-- Act like a real interviewer hiring for the role.
+- Act like a professional interviewer.
 
 Evaluate the candidate on:
 
@@ -101,29 +151,30 @@ Evaluate the candidate on:
 4. Relevance of Answers
 5. Completeness of Responses
 
-Scoring Rules:
+Interview Summary Rules:
 
-Question Score Guide:
+- Write a concise summary of the candidate's overall performance.
+- Mention strengths.
+- Mention areas for improvement.
+- Keep it between 3 and 6 sentences.
+- Write professionally.
+
+Scoring Rules:
 
 0-1 = Completely incorrect, irrelevant, or empty answer
 2-3 = Very weak answer with minimal understanding
 4-5 = Basic understanding but lacks depth
 6-7 = Good answer showing reasonable knowledge
-8-9 = Strong answer with examples and clear reasoning
-10 = Exceptional answer with deep understanding and excellent communication
+8-9 = Strong answer with examples and reasoning
+10 = Exceptional answer
 
-Important:
+Return ONLY valid JSON.
 
-- Use the FULL scoring range.
-- Do NOT give all questions the same score.
-- Reward effort and partial understanding.
-- Only use 0 when the answer is completely wrong or empty.
-- Penalize irrelevant answers.
-- Reward detailed examples.
-
-Return ONLY valid JSON in this format:
+Format:
 
 {{
+    "summary": "Overall interview summary",
+
     "overall_score": 78,
 
     "technical_score": 80,
@@ -160,7 +211,6 @@ Return ONLY valid JSON in this format:
 
         text = response.text.strip()
 
-        # Remove markdown if Gemini returns it
         text = text.replace("```json", "")
         text = text.replace("```", "")
         text = text.strip()
@@ -177,11 +227,15 @@ Return ONLY valid JSON in this format:
         print("EVALUATION ERROR:", str(e))
 
         return {
+            "summary": "Unable to generate interview summary.",
+
             "overall_score": 0,
             "technical_score": 0,
             "communication_score": 0,
             "problem_solving_score": 0,
+
             "question_feedback": [],
+
             "strengths": [],
             "weaknesses": [str(e)],
             "suggestions": []
