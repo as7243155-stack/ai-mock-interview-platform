@@ -155,14 +155,14 @@ function App() {
           </button>
 
           {evaluating && (
-            <div style={{ marginTop: "15px" }}>
-              <p>
-                ✅ Interview submitted successfully
-              </p>
+            <div style={{ marginTop: "20px" }}>
+              <h3>🤖 Analyzing Interview...</h3>
 
-              <p>
-                🤖 Generating your evaluation...
-              </p>
+              <p>📖 Reviewing your answers...</p>
+              <p>📊 Calculating skill scores...</p>
+              <p>📝 Generating personalized feedback...</p>
+
+              <p>Please wait a few moments.</p>
             </div>
           )}
         </>
@@ -184,30 +184,115 @@ function App() {
 </div>
 
           <h2>
-            Overall Score:{" "}
-            {result.overall_score}/100
+           Overall Score: {result.overall_score}/100
           </h2>
 
-          <hr />
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "600px",
+              margin: "20px auto",
+              backgroundColor: "#333",
+              borderRadius: "10px",
+              overflow: "hidden",
+              border: "1px solid gray",
+              position: "relative",
+              height: "25px",
+            }}
+          >
+            <div
+              style={{
+                width: `${result.overall_score}%`,
+                height: "100%",
+                backgroundColor: "#4CAF50",
+                transition: "width 0.5s ease",
+              }}
+            />
 
-          <h3>Category Scores</h3>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                fontWeight: "bold",
+              }}
+            >
+              {result.overall_score}%
+            </div>
+          </div>
 
-          <p>
-            Technical Knowledge:{" "}
-            {result.technical_score}/100
-          </p>
+       <h3>Skill Breakdown</h3>
 
-          <p>
-            Communication Skills:{" "}
-            {result.communication_score}/100
-          </p>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+        gap: "15px",
+        marginTop: "20px",
+        marginBottom: "20px",
+      }}
+    >
+      {result.skill_breakdown &&
+        Object.entries(result.skill_breakdown).map(
+          ([skill, score], index) => (
+            <div
+              key={index}
+              style={{
+                border: "1px solid gray",
+                borderRadius: "10px",
+                padding: "15px",
+                textAlign: "center",
+              }}
+            >
+              <h4>{skill}</h4>
 
-          <p>
-            Problem Solving:{" "}
-            {result.problem_solving_score}/100
-          </p>
+              <div
+                style={{
+                  width: "100%",
+                  backgroundColor: "#333",
+                  borderRadius: "10px",
+                  overflow: "hidden",
+                  marginTop: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    width: `${result.overall_score}%`,
+                    minWidth: "40px",
+                    height: "25px",
+                    backgroundColor: "#4CAF50",
+                    transition: "width 0.5s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {result.overall_score}%
+                </div>
+              </div>
 
-          <hr />
+              <p
+                style={{
+                  marginTop: "10px",
+                  fontWeight: "bold",
+                }}
+              >
+                {score}/100
+              </p>
+            </div>
+          )
+        )}
+    </div>
+
+<hr />
 
           <h3>Question-by-Question Feedback</h3>
 

@@ -145,11 +145,11 @@ Interview Evaluation Philosophy:
 
 Evaluate the candidate on:
 
-1. Technical Knowledge
-2. Communication Skills
-3. Problem Solving Ability
-4. Relevance of Answers
-5. Completeness of Responses
+1. Role Knowledge
+2. Practical Understanding
+3. Problem Solving
+4. Communication
+5. Quality and Completeness of Answers
 
 Interview Summary Rules:
 
@@ -167,7 +167,37 @@ Scoring Rules:
 6-7 = Good answer showing reasonable knowledge
 8-9 = Strong answer with examples and reasoning
 10 = Exceptional answer
+Skill Breakdown Rules:
 
+- Generate 4 role-specific skills.
+- Skills must match the profession being interviewed.
+- Assign a score from 0-100 for each skill.
+
+Examples:
+
+Software Engineer:
+- Programming Fundamentals
+- Debugging
+- System Design
+- Communication
+
+Chef:
+- Food Safety
+- Kitchen Operations
+- Menu Planning
+- Communication
+
+Teacher:
+- Subject Knowledge
+- Classroom Management
+- Student Engagement
+- Communication
+
+Marketing Manager:
+- Market Research
+- Campaign Strategy
+- Analytics
+- Communication
 Return ONLY valid JSON.
 
 Format:
@@ -177,9 +207,12 @@ Format:
 
     "overall_score": 78,
 
-    "technical_score": 80,
-    "communication_score": 75,
-    "problem_solving_score": 79,
+    "skill_breakdown": {{
+        "Skill 1": 80,
+        "Skill 2": 75,
+        "Skill 3": 70,
+        "Skill 4": 85
+    }},
 
     "question_feedback": [
         {{
@@ -227,16 +260,15 @@ Format:
         print("EVALUATION ERROR:", str(e))
 
         return {
-            "summary": "Unable to generate interview summary.",
+    "summary": "Unable to generate interview summary.",
 
-            "overall_score": 0,
-            "technical_score": 0,
-            "communication_score": 0,
-            "problem_solving_score": 0,
+    "overall_score": 0,
 
-            "question_feedback": [],
+    "skill_breakdown": {},
 
-            "strengths": [],
-            "weaknesses": [str(e)],
-            "suggestions": []
-        }
+    "question_feedback": [],
+
+    "strengths": [],
+    "weaknesses": [str(e)],
+    "suggestions": []
+}
