@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { supabase } from "./supabase";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import History from "./pages/History";
 
 function App() {
   const [role, setRole] = useState("");
@@ -8,6 +12,34 @@ function App() {
   const [evaluating, setEvaluating] = useState(false);
   const [result, setResult] = useState(null);
   const [level, setLevel] = useState("Fresher");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [page, setPage] = useState("interview");
+  const signUp = async () => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  console.log("SIGNUP DATA:", data);
+  console.log("SIGNUP ERROR:", error);
+
+  if (!error) {
+    alert("Signup successful!");
+  }
+};
+
+  
+  
+  const testConnection = async () => {
+  const {
+    data,
+    error,
+  } = await supabase.auth.getSession();
+
+  console.log("DATA:", data);
+  console.log("ERROR:", error);
+};
 
   const generateQuestions = async () => {
     setLoading(true);
@@ -59,18 +91,67 @@ function App() {
 
       console.log(data);
 
-      setResult(data);
-    } catch (error) {
+      const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (user) {
+          const { error } = await supabase
+            .from("interviews")
+            .insert([
+              {
+                user_id: user.id,
+                role: role,
+                score: data.overall_score,
+                summary: data.summary,
+              },
+            ]);
+
+          if (error) {
+            console.log("Save Error:", error);
+          } else {
+            console.log("Interview saved successfully");
+          }
+        }
+
+        setResult(data);
+  
+      } catch (error) {
       console.error("Submit Error:", error);
     }
 
     setEvaluating(false);
   };
 
+  if (page === "history") {
   return (
+    <>
+      <button
+        onClick={() => setPage("interview")}
+        style={{ margin: "20px" }}
+      >
+        Back To Interview
+      </button>
+
+      <History />
+    </>
+  );
+}
+
+return (
     <div style={{ padding: "20px", textAlign: "center" }}>
     <h1>AI Mock Interview Platform</h1>
-
+    <br />
+    <button
+      onClick={() => setPage("history")}
+      style={{
+        marginBottom: "20px",
+      }}
+    >
+      View Interview History
+    </button>
+  <br />
+  <br />
 <input
   type="text"
   placeholder="Enter Job Role"
