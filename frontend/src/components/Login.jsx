@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../supabase";
 
-function Login() {
+function Login({setPage}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -19,6 +19,7 @@ function Login() {
     }
 
     setMessage("Login Successful!");
+    setPage("dashboard");
   };
 
   return (

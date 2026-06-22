@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import History from "./pages/History";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [role, setRole] = useState("");
@@ -14,7 +15,25 @@ function App() {
   const [level, setLevel] = useState("Fresher");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [page, setPage] = useState("interview");
+  const [page, setPage] = useState("login");
+  const [checkingSession, setCheckingSession] = useState(true);
+  useEffect(() => {
+  checkSession();
+}, []);
+
+const checkSession = async () => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (session) {
+    setPage("dashboard");
+  } else {
+    setPage("login");
+  }
+
+  setCheckingSession(false);
+};
   const signUp = async () => {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -122,7 +141,15 @@ function App() {
 
     setEvaluating(false);
   };
-
+  if (checkingSession) {
+  return <h2>Loading...</h2>;
+ }
+  if (page === "login") {
+  return <Login setPage={setPage} />;
+  }
+  if (page === "dashboard") {
+  return <Dashboard setPage={setPage} />;
+  }
   if (page === "history") {
   return (
     <>
