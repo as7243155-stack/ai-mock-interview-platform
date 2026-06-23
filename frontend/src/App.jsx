@@ -154,10 +154,10 @@ const checkSession = async () => {
   return (
     <>
       <button
-        onClick={() => setPage("interview")}
+        onClick={() => setPage("dashboard")}
         style={{ margin: "20px" }}
       >
-        Back To Interview
+        Back To  Dashboard
       </button>
 
       <History />

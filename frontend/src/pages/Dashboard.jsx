@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 
+
 function Dashboard({ setPage }) {
   const [totalInterviews, setTotalInterviews] = useState(0);
   const [averageScore, setAverageScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
+  const [recentInterviews, setRecentInterviews] = useState([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -28,6 +30,9 @@ function Dashboard({ setPage }) {
     }
 
     setTotalInterviews(data.length);
+    setRecentInterviews(
+     data.slice(-5).reverse()
+    );
 
     if (data.length > 0) {
       const scores = data.map((item) => item.score);
@@ -92,6 +97,36 @@ function Dashboard({ setPage }) {
       >
         <h2>Best Score</h2>
         <p>{bestScore}</p>
+      </div>
+
+      <div
+        style={{
+          border: "1px solid gray",
+          padding: "20px",
+          margin: "20px",
+          borderRadius: "10px",
+        }}
+      >
+        <h2>Recent Interviews</h2>
+
+        {recentInterviews.length === 0 ? (
+          <p>No interviews yet</p>
+        ) : (
+          recentInterviews.map((interview) => (
+            <div
+              key={interview.id}
+              style={{
+                marginBottom: "15px",
+              }}
+            >
+              <strong>{interview.role}</strong>
+
+              <p>
+                Score: {interview.score}
+              </p>
+            </div>
+          ))
+        )}
       </div>
 
       <div style={{ marginTop: "30px" }}>
